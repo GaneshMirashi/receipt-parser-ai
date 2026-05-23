@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
-
+from app.service.gemini_service import extract_receipt_data
 app = FastAPI()
 
 
@@ -12,7 +12,11 @@ def home():
 async def extract_receipt(
     receipt: UploadFile = File(...)
 ):
-    return {
-        "filename": receipt.filename,
-        "content_type": receipt.content_type
-    }
+    
+    image_data = await receipt.read()
+
+    extracted_data = await extract_receipt_data(
+        image_data
+    )
+
+    return extracted_data
